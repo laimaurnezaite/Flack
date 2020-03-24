@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Flack</title>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+        <!-- <link href="/static/styles.css" rel="stylesheet"> -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+        <script>
+            // Set starting value of username to 'Stranger'
+            if (!localStorage.getItem('username'))
+                localStorage.setItem('username', 'Stranger');
+
+            // Load current value of username
+            document.addEventListener('DOMContentLoaded', () => {
+                //document.querySelector('#username').innerHTML = localStorage.getItem('username');
+
+                // get new value for username from user
+                document.querySelector('#new-name').onsubmit = () => {
+                    const username = document.querySelector('#name').value;
+                    localStorage.setItem('username', username);
+                };
+                // display welcome sentence
+                document.querySelector('#welcome').innerHTML = "Your are logged in as " + localStorage.getItem('username');
+            });
+        </script>
+    </head>
+    <body style="background-color: #EEE2DC;">
+        <div>
+            <div style="padding:20px; color:#123C69;">
+                <h2>Welcome to FLACK!</h2>
+                <h3 id="welcome"></h3>
+            </div>
+        </div>
+        
+        <p id="username"></p>
+        <div style="padding-left:20px; color:#123C69;"> 
+            <form id="new-name" method="POST">
+                <label for="name">Change name:</label>
+                <input id="name" autocomplete="off" autofocus placeholder="Username" type="text">
+                <input id="submit" type="submit">
+            </form>
+        </div>
+        <div class="container" style="padding-top: 50px; height:auto">
+            <div class="row">
+                <div class="col-4" style="border: 1px solid black;">Channels:
+                    <ul>
+                        
+                    </ul>
+                </div>
+                <div class="col-8" style="border: 1px solid black;">messages</div>
+
+            </div>
+
+        </div>
+    </body>
+</html>
