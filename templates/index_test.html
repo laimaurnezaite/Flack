@@ -1,0 +1,121 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Flack</title>
+        <script>
+            if (!localStorage.getItem('username'))
+                localStorage.setItem('username', 'Stranger');
+
+            // Load current value of  username
+            document.addEventListener('DOMContentLoaded', () => {
+                document.querySelector('#username').innerHTML = localStorage.getItem('username');
+            });
+
+            document.addEventListener('DOMContentLoaded', () => {
+
+                // By default, submit button is disabled
+                document.querySelector('#submit').disabled = true;
+
+                // Enable button only if there is text in the input field
+                document.querySelector('#name').onkeyup = () => {
+                    if (document.querySelector('#name').value.length > 0)
+                        document.querySelector('#submit').disabled = false;
+                    else
+                        document.querySelector('#submit').disabled = true;
+                };
+
+                document.querySelector('#user_name').onsubmit = () => {
+                    const name = document.createElement('p')
+                    name.innerHTML = document.querySelector('#name').value;
+
+                    document.querySelector('#username').append(name);
+
+                    localStorage.setItem('username', name.textContent);
+                }
+            });
+
+
+        </script>
+
+    </head>
+    <body>
+        <p id="username"></p>
+        <div>
+            <form id="user_name">
+                <input id="name" type="text" placeholder="Username">
+                <input id="submit" type="submit" value="Log In">
+            </form>
+        </div>
+    </body>
+</html> 
+ -->
+
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <script>
+            if (!localStorage.getItem('username'))
+                localStorage.setItem('username', 'Stranger');
+            
+            // Load current value of  username
+            document.addEventListener('DOMContentLoaded', () => {
+                document.querySelector('#username').innerHTML = localStorage.getItem('username');
+
+                document.querySelector('#new-name').onsubmit = () => {
+                    const name = document.createElement('p')
+                    name.innerHTML = document.querySelector('#name').value;
+    
+                    document.querySelector('#username').append(name);
+    
+                    console.log('hgere');
+                    localStorage.setItem('username', name);
+                }
+            });
+
+  
+
+            document.addEventListener('DOMContentLoaded', () => {
+
+                // By default, submit button is disabled
+                document.querySelector('#submit').disabled = true;
+
+                // Enable button only if there is text in the input field
+                document.querySelector('#name').onkeyup = () => {
+                    if (document.querySelector('#name').value.length > 0)
+                        document.querySelector('#submit').disabled = false;
+                    else
+                        document.querySelector('#submit').disabled = true;
+                };
+
+                document.querySelector('#new-name').onsubmit = () => {
+
+                    // Create new item for list
+                    const li = document.createElement('li');
+                    li.innerHTML = document.querySelector('#name').value;
+                    
+
+                    // Add new item to task list
+                    document.querySelector('#username').append(li);
+
+                    // Clear input field and disable button again
+                    document.querySelector('#name').value = '';
+                    document.querySelector('#submit').disabled = true;
+
+                    // Stop form from submitting
+                    return false;
+                };
+
+            });
+        </script>
+        <title>Flack</title>
+    </head>
+    <body>
+        <h1>NAMES</h1>
+        <p id="username"></p>
+        <form id="new-name">
+            <input id="name" autocomplete="off" autofocus placeholder="New name" type="text">
+            <input id="submit" type="submit">
+        </form>
+    </body>
+</html>
