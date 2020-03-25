@@ -1,13 +1,13 @@
 import os
 
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect
 from flask_socketio import SocketIO, emit
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = os.getenv("SECRET_KEY")
 socketio = SocketIO(app)
 
-channels = []
+channels = ["cooking", "gardening", "cleaning", "clothes"]
 
 @app.route("/", methods = ["GET"])
 def render_index():
@@ -18,7 +18,12 @@ def render_index():
 def index():
         return render_template("index.html")
 
+# @app.route("/cooking", methods=["GET"])
+# def render_cooking():
+#     return render_template("index.html", channels=channels)
 
-@app.route("/add_channel", methods=["GET"])
-def render_add_channel():
-    
+
+@socketio.on("submit message")
+def message(data):
+    message = data["message"]
+    emit("display message", {"message": message}, broadcast=True)
