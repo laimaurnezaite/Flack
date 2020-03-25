@@ -16,3 +16,9 @@ Web Programming with Python and JavaScript
 
 # How to run app?
 - poetry run flask run
+
+# How to print something to console?
+- console.log({
+    li,
+    data
+});
