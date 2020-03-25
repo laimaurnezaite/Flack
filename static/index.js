@@ -16,22 +16,38 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelector('#welcome').innerHTML = "Your are logged in as " + localStorage.getItem('username');
 });
 
+
 //WORK WITH CHANNELS
 if (!localStorage.getItem('channels'))
 localStorage.setItem('channels', JSON.stringify([]))
 
 // load current value of channels
 document.addEventListener('DOMContentLoaded', () => {
+    
 
 const list_element = document.querySelector('#channel-list');
 const list_from_storage = localStorage.getItem('channels');
 const list_to_show = JSON.parse(list_from_storage);
 
+let counter = 0;
 for (const item of list_to_show) {
+    const a = document.createElement('a');
+    counter++;
+    a.id = `channel_link${counter}`;
     const item2 = document.createElement('li');
-    item2.appendChild(document.createTextNode(item));
+    a.appendChild(document.createTextNode(item));
+    //a.href=`${item}`;
+    a.onclick = (evt) => {
+        evt.preventDefault();
+        console.log({ item });
+        localStorage.setItem('current_channel', item);
+    }
+    a.href=""
+    item2.appendChild(a)
     list_element.appendChild(item2);
+    
 }
+console.log('test5');
                 
  // get new channel from user
 document.querySelector('#new_channel').onsubmit = (event) => {
@@ -50,7 +66,6 @@ document.querySelector('#new_channel').onsubmit = (event) => {
     }
 }
 });
-
 
 
 //WORK WITH MESSAGES
