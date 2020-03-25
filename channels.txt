@@ -1,0 +1,31 @@
+//WORK WITH CHANNELS
+            if (!localStorage.getItem('channels'))
+                localStorage.setItem('channels', 'There are no channels at this moment')
+            
+            // load current value of channels
+            document.addEventListener('DOMContentLoaded', () => {
+                document.querySelector('#channels').innerHTML = localStorage.getItem('channels');
+
+                 // get new channels from user
+                document.querySelector('#new_channel').onsubmit = () => {
+
+                    // Create new item for list
+                    const ul = document.createElement('ul')
+                    const li = document.createElement('li');
+                    li.innerHTML = document.querySelector('#chanel_name').value;
+
+                    ul.append(li);
+                    
+                    localStorage.setItem('channels', ul);
+
+                    // Add new item to task list
+                    document.querySelector('#channels').append(li);
+
+                    // Clear input field
+                    document.querySelector('#chanel_name').value = '';
+
+                    // Stop form from submitting
+                    return false;
+                }
+
+            });
