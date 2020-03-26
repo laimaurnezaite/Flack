@@ -25,5 +25,5 @@ def index():
 
 @socketio.on("submit message")
 def message(data):
-    message = data["message"]
-    emit("display message", {"message": message}, broadcast=True)
+        message = data["message"]
+        emit("display message", {"message": message}, broadcast=True)

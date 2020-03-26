@@ -15,8 +15,11 @@ function displayOldMessagesFromChosenChannel(channelName) {
     }
 
     for (const message_item of currentChannelContent) {
+        // console.log({message_item,})
         const listElement = document.createElement('li');
-        listElement.appendChild(document.createTextNode(message_item));
+        // const message = `${datetime} ${localStorage.getItem('username')}: ${document.querySelector('#new_message').value}`;
+        const messageToDisplay = `${message_item.time} ${message_item.user}: ${message_item.message}`;
+        listElement.appendChild(document.createTextNode(messageToDisplay));
         messages_list_element.appendChild(listElement);
     }
 };
@@ -80,9 +83,9 @@ document.querySelector('#new_channel').onsubmit = (event) => {
     
         dict[new_channel_name] = [];
         
-        console.log({
-            dict,
-        });                
+        // console.log({
+        //     dict,
+        // });                
         // add list to local storage
         localStorage.setItem('channels', JSON.stringify(dict));
         
@@ -123,13 +126,18 @@ document.addEventListener('DOMContentLoaded', () => {
                                 + currentdate.getMinutes() + ":" 
                                 + currentdate.getSeconds();
 
-                const message = `${datetime} ${localStorage.getItem('username')}: ${document.querySelector('#new_message').value}`;
+                const message = {};
+                message.user = localStorage.getItem('username');
+                message.time = datetime;
+                message.message = document.querySelector('#new_message').value
+                // const message = `${datetime} ${localStorage.getItem('username')}: ${document.querySelector('#new_message').value}`;
+                // console.log({message,});
                 const default_channel = localStorage.getItem('default_channel')
                 const channelsObj3 = JSON.parse(localStorage.getItem('channels'));
                 const currentChannelContent = channelsObj3[default_channel];
             
                 const currentChannelContentLength = currentChannelContent.length;
-                console.log({currentChannelContentLength})
+                // console.log({currentChannelContentLength})
 
                 if (currentChannelContentLength > 100) {
                     currentChannelContent.shift();
@@ -156,9 +164,8 @@ document.addEventListener('DOMContentLoaded', () => {
     
     //display new messages
     socket.on('display message', data => {
-        const messages_list_element = document.querySelector('#messages_list');
         const li = document.createElement('li');
-        li.innerHTML = `${data.message}`;
+        li.innerHTML = `${data.message.time} ${data.message.user}: ${data.message.message}`;
         document.querySelector('#messages_list').append(li);
     });
 });
