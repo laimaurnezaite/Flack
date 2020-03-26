@@ -8,9 +8,11 @@ function displayOldMessagesFromChosenChannel(channelName) {
     const channelsObj3 = JSON.parse(localStorage.getItem('channels'));
     const default_channel = localStorage.getItem('default_channel')
     const currentChannelContent = channelsObj3[default_channel];
-    console.log({default_channel});
-
-    console.log({currentChannelContent: currentChannelContent})
+    const currentChannelContentLength = currentChannelContent.length;
+    
+    if (currentChannelContentLength > 100) {
+        currentChannelContent.shift();
+    }
 
     for (const message_item of currentChannelContent) {
         const listElement = document.createElement('li');
@@ -126,10 +128,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 const channelsObj3 = JSON.parse(localStorage.getItem('channels'));
                 const currentChannelContent = channelsObj3[default_channel];
             
-                currentChannelContent.push(message)
-                console.log(
-                    currentChannelContent,
-                )
+                const currentChannelContentLength = currentChannelContent.length;
+                console.log({currentChannelContentLength})
+
+                if (currentChannelContentLength > 100) {
+                    currentChannelContent.shift();
+                }
+
+                currentChannelContent.push(message);
+
 
                 socket.emit('submit message', {'message' : message});
 
