@@ -1,4 +1,22 @@
-colors {
+body {
+    background-color: white;
+    
+}
+.headers {
+    background-color: #AC3B61;
+    padding:20px; 
+    color:white;
+}
+/* .changeNameOrAddChannel {
+    background-color: red;
+    padding-left:50px; 
+    color:#123C69;
+} */
+
+/* .new-name {
+    padding: 20px;
+} */
+/* colors {
     background-color: #edc7b7;
     background-color: #EEE2DC;
     background-color: #BAB2B5;
@@ -6,4 +24,4 @@ colors {
     background-color: #AC3B61;
     
 
-}
+} */
