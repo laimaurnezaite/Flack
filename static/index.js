@@ -1,27 +1,62 @@
 
 function displayOldMessagesFromChosenChannel(channelName) {
     document.querySelector('#messages_list').innerHTML = null;
+    document.querySelector('#deletion').innerHTML = null;
 
     // dislay old messages form storage
     const messages_list_element = document.querySelector('#messages_list');
+    const deleteOptionsListElement =  document.querySelector('#deletion')
 
     const channelsObj3 = JSON.parse(localStorage.getItem('channels'));
     const default_channel = localStorage.getItem('default_channel')
     const currentChannelContent = channelsObj3[default_channel];
-    const currentChannelContentLength = currentChannelContent.length;
+    
+    if (!currentChannelContent) {
+        return false
+    } else {
+        var currentChannelContentLength = currentChannelContent.length;
+    }
     
     if (currentChannelContentLength > 100) {
         currentChannelContent.shift();
     }
-
+    var counter2 = 0;
     for (const message_item of currentChannelContent) {
         // console.log({message_item,})
         const listElement = document.createElement('li');
-        // const message = `${datetime} ${localStorage.getItem('username')}: ${document.querySelector('#new_message').value}`;
-        const messageToDisplay = `${message_item.time} ${message_item.user}: ${message_item.message}`;
-        listElement.appendChild(document.createTextNode(messageToDisplay));
+        const deletionListElement = document.createElement('li');
+        const a = document.createElement('a')
+        a.href='#';
+        a.id = `canDelete${counter2}`;
+        counter2++;
+
+        if (message_item.isDeleted == false) {
+            const messageToDisplay = `${message_item.time} ${message_item.user}: ${message_item.message}`;
+            listElement.appendChild(document.createTextNode(messageToDisplay));
+        } else {
+            const messageToDisplay = `${message_item.time} ${message_item.user}: This message was removed`;
+            listElement.appendChild(document.createTextNode(messageToDisplay));
+        }        
         messages_list_element.appendChild(listElement);
-    }
+    
+        //add delete option
+        if (localStorage.getItem('username') == message_item.user) {
+            a.appendChild(document.createTextNode('X'))
+            deletionListElement.appendChild(a);
+            deleteOptionsListElement.appendChild(deletionListElement);
+        } else {
+            a.appendChild(document.createTextNode(''))
+            deletionListElement.appendChild(a);
+            deleteOptionsListElement.appendChild(deletionListElement);
+        }
+
+        //delete message
+        a.onclick = (evt) => {
+            evt.preventDefault();
+            message_item.isDeleted = true
+            localStorage.setItem('channels', JSON.stringify(channelsObj3));
+        }
+    }  
 };
 
 //WORK WITH NAMES
@@ -82,10 +117,7 @@ document.querySelector('#new_channel').onsubmit = (event) => {
         const dict = JSON.parse(retrievedObject)
     
         dict[new_channel_name] = [];
-        
-        // console.log({
-        //     dict,
-        // });                
+                     
         // add list to local storage
         localStorage.setItem('channels', JSON.stringify(dict));
         
@@ -130,7 +162,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 message.user = localStorage.getItem('username');
                 message.time = datetime;
                 message.message = document.querySelector('#new_message').value
-                // const message = `${datetime} ${localStorage.getItem('username')}: ${document.querySelector('#new_message').value}`;
+                message.isDeleted = false;
                 // console.log({message,});
                 const default_channel = localStorage.getItem('default_channel')
                 const channelsObj3 = JSON.parse(localStorage.getItem('channels'));
