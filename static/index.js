@@ -53,7 +53,7 @@ function displayOldMessagesFromChosenChannel(channelName) {
 
         //delete message
         a.onclick = (evt) => {
-            evt.preventDefault();
+            // evt.preventDefault();
             message_item.isDeleted = true
             localStorage.setItem('channels', JSON.stringify(channelsObj3));
         }
@@ -67,7 +67,6 @@ if (!localStorage.getItem('username'))
 
 // Load current value of username
 document.addEventListener('DOMContentLoaded', () => {
-    //document.querySelector('#username').innerHTML = localStorage.getItem('username');
 
     // get new value for username from user
     document.querySelector('#new-name').onsubmit = () => {
