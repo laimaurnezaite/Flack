@@ -2,6 +2,7 @@
 function displayOldMessagesFromChosenChannel(channelName) {
     document.querySelector('#messages_list').innerHTML = null;
     document.querySelector('#deletion').innerHTML = null;
+    document.querySelector('#currentChannelName').innerHTML = `Messages in channel: ${channelName}`;
 
     // dislay old messages form storage
     const messages_list_element = document.querySelector('#messages_list');
