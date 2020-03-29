@@ -1,12 +1,12 @@
-body {
+/* body {
     background-color: white;
     
-}
-.headers {
+} */
+/* .headers {
     background-color: #AC3B61;
     padding:20px; 
     color:white;
-}
+} */
 /* .changeNameOrAddChannel {
     background-color: red;
     padding-left:50px; 
@@ -25,3 +25,7 @@ body {
     
 
 } */
+
+.row {
+    border: 1px solid black;
+}

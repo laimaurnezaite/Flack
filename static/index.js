@@ -92,18 +92,34 @@ const default_channel = localStorage.getItem('default_channel')
 // console.log({default_channel,});
 
 for (const channelName of Object.keys(channelsObj)) {
+    console.log({channelName})
     const a = document.createElement('a');
     a.id = channelName;
-    const listElement = document.createElement('li');
+    // const listElement = document.createElement('li');
+    // const tableRow = document.createElement('tr');
+    const tableRow = document.createElement('div');
+    // tableRow.class = "row";
+    tableRow.classList.add("row");
+    const tableColumn = document.createElement('div');
+    tableColumn.classList.add("col-3");
+    // tableColumn.class = "col-3";
+    // const tableData = document.createElement('td');
     a.appendChild(document.createTextNode(channelName));
     a.onclick = (evt) => {
         evt.preventDefault();
         localStorage.setItem('default_channel', channelName);
         displayOldMessagesFromChosenChannel(channelName);
     }
-    a.href=""
-    listElement.appendChild(a)
-    listContainer.appendChild(listElement);
+    a.href="";
+    tableColumn.appendChild(a);
+    tableRow.appendChild(tableColumn);
+    listContainer.appendChild(tableRow);
+    // tableData.appendChild(a);
+    // tableRow.appendChild(tableData)
+    // listContainer.appendChild(tableRow);
+
+    // listElement.appendChild(a)
+    // listContainer.appendChild(listElement);
     
 }                
  // get new channel from user
@@ -194,10 +210,19 @@ document.addEventListener('DOMContentLoaded', () => {
         };
     });
     
-    //display new messages
+    //display new message
     socket.on('display message', data => {
         const li = document.createElement('li');
         li.innerHTML = `${data.message.time} ${data.message.user}: ${data.message.message}`;
         document.querySelector('#messages_list').append(li);
     });
+
+    // socket.on('delete message', data => {
+    //     const li = document.createElement('li');
+    //     li.innerHTML = `${data.message.time} ${data.message.user}: This message was removed`;
+    //     document.querySelector('#messages_list').append(li);
+    // });
+
 });
+
+
