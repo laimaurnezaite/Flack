@@ -6,7 +6,6 @@ function displayOldMessagesFromChosenChannel(channelName) {
     document.querySelector('#messages_list').innerHTML = null;
     // document.querySelector('#deletion').innerHTML = null;
     document.querySelector('#currentChannelName').innerHTML = `Messages in channel: ${channelName}`;
-
     // dislay old messages form storage
     const messages_list_element = document.querySelector('#messages_list');
     // const deleteOptionsListElement =  document.querySelector('#deletion')
@@ -24,14 +23,13 @@ function displayOldMessagesFromChosenChannel(channelName) {
     if (currentChannelContentLength > 100) {
         currentChannelContent.shift();
     }
-    var counter2 = 0;
     for (const message_item of currentChannelContent) {
          
         const tableRow = document.createElement('div');
         tableRow.classList.add("row");
         const tableColumn = document.createElement('div');
         tableColumn.classList.add("col-10");
-        tableColumn.id = `message${counter2}`;
+        tableColumn.id = message_item.id
 
         const deletionTableColum = document.createElement('div');
         deletionTableColum.classList.add("col-2");
@@ -39,8 +37,6 @@ function displayOldMessagesFromChosenChannel(channelName) {
 
         const a = document.createElement('a')
         a.href='#';
-        a.id = `canDelete${counter2}`;
-        counter2++;
         a.appendChild(document.createTextNode('Delete'))
         deletionTableColum.appendChild(a);
 
@@ -65,12 +61,15 @@ function displayOldMessagesFromChosenChannel(channelName) {
     
         //delete message
         a.onclick = (evt) => {
-            // evt.preventDefault();
-            socket.emit('delete message', {'message' : message});
+            evt.preventDefault();
+            socket.emit('delete message', {'message' : message_item});
+            socket.on('display deleted message', data => {
+                document.getElementById(`${tableColumn.id}`).innerHTML = `${data.message.time} ${data.message.user}: ${data.message.message}`
             message_item.isDeleted = true
             localStorage.setItem('channels', JSON.stringify(channelsObj3));
-        }
-    }  
+            });
+        };
+    }; 
 };
 
 //WORK WITH NAMES
@@ -105,7 +104,7 @@ const default_channel = localStorage.getItem('default_channel')
 // console.log({default_channel,});
 
 for (const channelName of Object.keys(channelsObj)) {
-    console.log({channelName})
+    // console.log({channelName})
     const a = document.createElement('a');
     a.id = channelName;
     const tableRow = document.createElement('div');
@@ -178,13 +177,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 message.time = datetime;
                 message.message = document.querySelector('#new_message').value
                 message.isDeleted = false;
-                // console.log({message,});
+                message.id = new Date().getTime() + message.user;
                 const default_channel = localStorage.getItem('default_channel')
                 const channelsObj3 = JSON.parse(localStorage.getItem('channels'));
                 const currentChannelContent = channelsObj3[default_channel];
             
                 const currentChannelContentLength = currentChannelContent.length;
-                // console.log({currentChannelContentLength})
 
                 if (currentChannelContentLength > 100) {
                     currentChannelContent.shift();
@@ -196,7 +194,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 socket.emit('submit message', {'message' : message});
 
                 // add list to local storage
-
                 localStorage.setItem('channels', JSON.stringify(channelsObj3));
 
                 // Clear input field and disable button again
@@ -216,7 +213,7 @@ document.addEventListener('DOMContentLoaded', () => {
         tableRow.classList.add("row");
         const tableColumn = document.createElement('div');
         tableColumn.classList.add("col-10");
-        // tableColumn.id = `message${counter2}`;
+        tableColumn.id = data.message.id;
 
         const deletionTableColum = document.createElement('div');
         deletionTableColum.classList.add("col-2");
@@ -224,8 +221,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const a = document.createElement('a')
         a.href='#';
-        // a.id = `canDelete${counter2}`;
-        // counter2++;
         a.appendChild(document.createTextNode('Delete'))
         deletionTableColum.appendChild(a);
 
@@ -240,23 +235,10 @@ document.addEventListener('DOMContentLoaded', () => {
             tableRow.appendChild(tableColumn);
         }
 
-
-
-
-
-
-        // tableColumn.innerHTML = `${data.message.time} ${data.message.user}: ${data.message.message}`;
-
-        // tableRow.appendChild(tableColumn);
         document.querySelector('#messages_list').append(tableRow);
 
     });
 
-    // socket.on('delete message', data => {
-    //     const li = document.createElement('li');
-    //     li.innerHTML = `${data.message.time} ${data.message.user}: This message was removed`;
-    //     document.querySelector('#messages_list').append(li);
-    // });
 
 });
 

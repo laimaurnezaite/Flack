@@ -27,3 +27,10 @@ def index():
 def message(data):
         message = data["message"]
         emit("display message", {"message": message}, broadcast=True)
+
+@socketio.on("delete message")
+def delete_message(data):
+        data["message"]["message"] = "This message was removed"
+        data["message"]["isDeleted"] = True
+        message = data["message"]
+        emit("display deleted message", {"message": message}, broadcast=True)
