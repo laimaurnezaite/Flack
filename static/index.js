@@ -1,12 +1,15 @@
+// Connect to websocket
+var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port);
+
 
 function displayOldMessagesFromChosenChannel(channelName) {
     document.querySelector('#messages_list').innerHTML = null;
-    document.querySelector('#deletion').innerHTML = null;
+    // document.querySelector('#deletion').innerHTML = null;
     document.querySelector('#currentChannelName').innerHTML = `Messages in channel: ${channelName}`;
 
     // dislay old messages form storage
     const messages_list_element = document.querySelector('#messages_list');
-    const deleteOptionsListElement =  document.querySelector('#deletion')
+    // const deleteOptionsListElement =  document.querySelector('#deletion')
 
     const channelsObj3 = JSON.parse(localStorage.getItem('channels'));
     const default_channel = localStorage.getItem('default_channel')
@@ -28,15 +31,12 @@ function displayOldMessagesFromChosenChannel(channelName) {
         tableRow.classList.add("row");
         const tableColumn = document.createElement('div');
         tableColumn.classList.add("col-10");
+        tableColumn.id = `message${counter2}`;
 
         const deletionTableColum = document.createElement('div');
         deletionTableColum.classList.add("col-2");
 
 
-
-
-
-        
         const a = document.createElement('a')
         a.href='#';
         a.id = `canDelete${counter2}`;
@@ -63,21 +63,10 @@ function displayOldMessagesFromChosenChannel(channelName) {
 
         messages_list_element.appendChild(tableRow);
     
-        // //add delete option
-        // if (localStorage.getItem('username') == message_item.user) {
-        //     
-        //     deletionListElement.appendChild(a);
-        //     deleteOptionsListElement.appendChild(deletionListElement);
-        // } else {
-        //     a.appendChild(document.createTextNode(''))
-        //     deletionListElement.appendChild(a);
-        //     deleteOptionsListElement.appendChild(deletionListElement);
-        // }
-
         //delete message
         a.onclick = (evt) => {
-            
             // evt.preventDefault();
+            socket.emit('delete message', {'message' : message});
             message_item.isDeleted = true
             localStorage.setItem('channels', JSON.stringify(channelsObj3));
         }
@@ -167,9 +156,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!localStorage.getItem('default_channel'))
     localStorage.setItem('default_channel', JSON.stringify([]))
     
-    // Connect to websocket
-    var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port);
-
+    
     //write new message
     socket.on('connect', () => {
         document.querySelector('#write_new_message').onsubmit= (event) => {
@@ -224,18 +211,45 @@ document.addEventListener('DOMContentLoaded', () => {
     
     //display new message
     socket.on('display message', data => {
+
         const tableRow = document.createElement('div');
         tableRow.classList.add("row");
         const tableColumn = document.createElement('div');
-        tableColumn.classList.add("col");
+        tableColumn.classList.add("col-10");
+        // tableColumn.id = `message${counter2}`;
 
-        tableColumn.innerHTML = `${data.message.time} ${data.message.user}: ${data.message.message}`;
-        tableRow.appendChild(tableColumn);
+        const deletionTableColum = document.createElement('div');
+        deletionTableColum.classList.add("col-2");
+
+
+        const a = document.createElement('a')
+        a.href='#';
+        // a.id = `canDelete${counter2}`;
+        // counter2++;
+        a.appendChild(document.createTextNode('Delete'))
+        deletionTableColum.appendChild(a);
+
+        if (localStorage.getItem('username') == data.message.user) {
+            const messageToDisplay = `${data.message.time} ${data.message.user}: ${data.message.message}`;
+            tableColumn.appendChild(document.createTextNode(messageToDisplay));
+            tableRow.appendChild(tableColumn);
+            tableRow.appendChild(deletionTableColum);
+        } else {
+            const messageToDisplay = `${data.message.time} ${data.message.user}: ${data.message.message}`;
+            tableColumn.appendChild(document.createTextNode(messageToDisplay));
+            tableRow.appendChild(tableColumn);
+        }
+
+
+
+
+
+
+        // tableColumn.innerHTML = `${data.message.time} ${data.message.user}: ${data.message.message}`;
+
+        // tableRow.appendChild(tableColumn);
         document.querySelector('#messages_list').append(tableRow);
 
-        // const li = document.createElement('li');
-        // li.innerHTML = `${data.message.time} ${data.message.user}: ${data.message.message}`;
-        // document.querySelector('#messages_list').append(li);
     });
 
     // socket.on('delete message', data => {
