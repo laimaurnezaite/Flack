@@ -74,7 +74,7 @@ document.addEventListener('DOMContentLoaded', () => {
         localStorage.setItem('username', username);
     };
     // display welcome sentence
-    document.querySelector('#welcome').innerHTML = "Your are logged in as " + localStorage.getItem('username');
+    document.querySelector('#welcome').innerHTML = "Hi,  " + localStorage.getItem('username');
 });
 
 
