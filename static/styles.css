@@ -29,3 +29,9 @@
 .row {
     border: 1px solid black;
 }
+.col-10 {
+    background-color: red;
+}
+.col-2 {
+    text-align: right;
+}

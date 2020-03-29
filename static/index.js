@@ -23,36 +23,60 @@ function displayOldMessagesFromChosenChannel(channelName) {
     }
     var counter2 = 0;
     for (const message_item of currentChannelContent) {
-        // console.log({message_item,})
-        const listElement = document.createElement('li');
-        const deletionListElement = document.createElement('li');
+         
+        const tableRow = document.createElement('div');
+        tableRow.classList.add("row");
+        const tableColumn = document.createElement('div');
+        tableColumn.classList.add("col-10");
+
+        const deletionTableColum = document.createElement('div');
+        deletionTableColum.classList.add("col-2");
+
+
+
+
+
+        
         const a = document.createElement('a')
         a.href='#';
         a.id = `canDelete${counter2}`;
         counter2++;
+        a.appendChild(document.createTextNode('Delete'))
+        deletionTableColum.appendChild(a);
 
         if (message_item.isDeleted == false) {
-            const messageToDisplay = `${message_item.time} ${message_item.user}: ${message_item.message}`;
-            listElement.appendChild(document.createTextNode(messageToDisplay));
+            if (localStorage.getItem('username') == message_item.user) {
+                const messageToDisplay = `${message_item.time} ${message_item.user}: ${message_item.message}`;
+                tableColumn.appendChild(document.createTextNode(messageToDisplay));
+                tableRow.appendChild(tableColumn);
+                tableRow.appendChild(deletionTableColum);
+            } else {
+                const messageToDisplay = `${message_item.time} ${message_item.user}: ${message_item.message}`;
+                tableColumn.appendChild(document.createTextNode(messageToDisplay));
+                tableRow.appendChild(tableColumn);
+            }
         } else {
             const messageToDisplay = `${message_item.time} ${message_item.user}: This message was removed`;
-            listElement.appendChild(document.createTextNode(messageToDisplay));
-        }        
-        messages_list_element.appendChild(listElement);
-    
-        //add delete option
-        if (localStorage.getItem('username') == message_item.user) {
-            a.appendChild(document.createTextNode('X'))
-            deletionListElement.appendChild(a);
-            deleteOptionsListElement.appendChild(deletionListElement);
-        } else {
-            a.appendChild(document.createTextNode(''))
-            deletionListElement.appendChild(a);
-            deleteOptionsListElement.appendChild(deletionListElement);
+            tableColumn.appendChild(document.createTextNode(messageToDisplay));
+            tableRow.appendChild(tableColumn);
         }
+
+        messages_list_element.appendChild(tableRow);
+    
+        // //add delete option
+        // if (localStorage.getItem('username') == message_item.user) {
+        //     
+        //     deletionListElement.appendChild(a);
+        //     deleteOptionsListElement.appendChild(deletionListElement);
+        // } else {
+        //     a.appendChild(document.createTextNode(''))
+        //     deletionListElement.appendChild(a);
+        //     deleteOptionsListElement.appendChild(deletionListElement);
+        // }
 
         //delete message
         a.onclick = (evt) => {
+            
             // evt.preventDefault();
             message_item.isDeleted = true
             localStorage.setItem('channels', JSON.stringify(channelsObj3));
@@ -95,15 +119,10 @@ for (const channelName of Object.keys(channelsObj)) {
     console.log({channelName})
     const a = document.createElement('a');
     a.id = channelName;
-    // const listElement = document.createElement('li');
-    // const tableRow = document.createElement('tr');
     const tableRow = document.createElement('div');
-    // tableRow.class = "row";
     tableRow.classList.add("row");
     const tableColumn = document.createElement('div');
     tableColumn.classList.add("col-3");
-    // tableColumn.class = "col-3";
-    // const tableData = document.createElement('td');
     a.appendChild(document.createTextNode(channelName));
     a.onclick = (evt) => {
         evt.preventDefault();
@@ -113,14 +132,7 @@ for (const channelName of Object.keys(channelsObj)) {
     a.href="";
     tableColumn.appendChild(a);
     tableRow.appendChild(tableColumn);
-    listContainer.appendChild(tableRow);
-    // tableData.appendChild(a);
-    // tableRow.appendChild(tableData)
-    // listContainer.appendChild(tableRow);
-
-    // listElement.appendChild(a)
-    // listContainer.appendChild(listElement);
-    
+    listContainer.appendChild(tableRow);    
 }                
  // get new channel from user
 document.querySelector('#new_channel').onsubmit = (event) => {
@@ -212,9 +224,18 @@ document.addEventListener('DOMContentLoaded', () => {
     
     //display new message
     socket.on('display message', data => {
-        const li = document.createElement('li');
-        li.innerHTML = `${data.message.time} ${data.message.user}: ${data.message.message}`;
-        document.querySelector('#messages_list').append(li);
+        const tableRow = document.createElement('div');
+        tableRow.classList.add("row");
+        const tableColumn = document.createElement('div');
+        tableColumn.classList.add("col");
+
+        tableColumn.innerHTML = `${data.message.time} ${data.message.user}: ${data.message.message}`;
+        tableRow.appendChild(tableColumn);
+        document.querySelector('#messages_list').append(tableRow);
+
+        // const li = document.createElement('li');
+        // li.innerHTML = `${data.message.time} ${data.message.user}: ${data.message.message}`;
+        // document.querySelector('#messages_list').append(li);
     });
 
     // socket.on('delete message', data => {
