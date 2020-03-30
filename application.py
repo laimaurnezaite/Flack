@@ -30,7 +30,9 @@ def message(data):
 
 @socketio.on("delete message")
 def delete_message(data):
-        data["message"]["message"] = "This message was removed"
-        data["message"]["isDeleted"] = True
-        message = data["message"]
+        message = {}
+        message["message"] = "This message was removed"
+        message["user"] = data["message"]["user"]
+        message["time"] = data["message"]["time"] 
+        message["id"] = data["message"]["id"] 
         emit("display deleted message", {"message": message}, broadcast=True)
