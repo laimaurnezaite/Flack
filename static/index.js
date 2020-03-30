@@ -110,7 +110,7 @@ for (const channelName of Object.keys(channelsObj)) {
     const tableRow = document.createElement('div');
     tableRow.classList.add("row");
     const tableColumn = document.createElement('div');
-    tableColumn.classList.add("col-3");
+    tableColumn.classList.add("col-2");
     a.appendChild(document.createTextNode(channelName));
     a.onclick = (evt) => {
         evt.preventDefault();
