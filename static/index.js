@@ -192,12 +192,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }                
     // get new channel from user
     document.querySelector('#new_channel').onsubmit = (event) => {
-        // event.preventDefault();
 
         // Create new item for list
         try {
             const new_channel_name = document.querySelector('#channel_name').value;
-            // const channelsObj = JSON.parse(localStorage.getItem('channels'));
             const channelsObj = getChannelsFromStorage();
 
             // check if there is no channel already
