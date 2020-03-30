@@ -129,13 +129,18 @@ document.querySelector('#new_channel').onsubmit = (event) => {
     // Create new item for list
     try {
         const new_channel_name = document.querySelector('#channel_name').value;
-        var retrievedObject = localStorage.getItem('channels');
-        const dict = JSON.parse(retrievedObject)
-    
-        dict[new_channel_name] = [];
-                     
+        const channelsObj = JSON.parse(localStorage.getItem('channels'));
+        
+        // check if there is no channel already
+        for (const channelName of Object.keys(channelsObj)) {
+            if (channelName == new_channel_name) {
+                alert(`There is already a channel named ${new_channel_name}`)
+                return false;
+            }
+        }
+        channelsObj[new_channel_name] = [];     
         // add list to local storage
-        localStorage.setItem('channels', JSON.stringify(dict));
+        localStorage.setItem('channels', JSON.stringify(channelsObj));
         
     } catch (e) {
         console.log(e);
