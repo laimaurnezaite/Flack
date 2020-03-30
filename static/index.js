@@ -1,6 +1,78 @@
 // Connect to websocket
 var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port);
 
+function createNewRow() {
+    const tableRow = document.createElement('div');
+    tableRow.classList.add("row");
+    return tableRow
+}
+function createNewColumn() {
+    const tableColumn = document.createElement('div');
+    tableColumn.classList.add("col");
+    return tableColumn
+}
+
+function createNewAElement() {
+    const a = document.createElement('a');
+    a.href='';
+    return a;
+}
+
+function deleteOption() {
+    const deleteButton = createNewColumn();
+    deleteButton.classList.toggle("col-2");
+    const a = createNewAElement();
+    a.appendChild(document.createTextNode('Delete'))
+    deleteButton.appendChild(a);
+    return deleteButton;
+};
+
+function displayNewMessage(data) {
+    const channelsObj3 = JSON.parse(localStorage.getItem('channels'));
+    const tableRow = createNewRow();
+    const tableColumn = createNewColumn();
+    const deleteButton = deleteOption();
+    tableColumn.id = data.message.id;
+    if (localStorage.getItem('username') == data.message.user) {
+        const messageToDisplay = `${data.message.time} ${data.message.user}: ${data.message.message}`;
+        tableColumn.appendChild(document.createTextNode(messageToDisplay));
+        tableRow.appendChild(tableColumn);
+        tableRow.appendChild(deleteButton);
+    } else {
+        const messageToDisplay = `${data.message.time} ${data.message.user}: ${data.message.message}`;
+        tableColumn.appendChild(document.createTextNode(messageToDisplay));
+        tableRow.appendChild(tableColumn);
+    }
+    document.querySelector('#messages_list').append(tableRow);
+
+    deleteButton.onclick = (evt) => {
+        event.preventDefault();
+        console.log({data})
+        const dataToDelete = data['message']
+        deleteMessage(dataToDelete);
+    }
+};
+
+function deleteMessage(message_item) {
+
+    socket.emit('delete message', {'message' : message_item});
+    socket.on('display deleted message', data => {
+        const deletedMessageText = data["message"]["message"];
+        const deletedMessageID = data["message"]["id"];
+        console.log({deletedMessageID});
+        const deletedMessageTime = data["message"]["time"];
+        const deletedMessageUser = data["message"]["user"];
+        document.getElementById(`${deletedMessageID}`).innerHTML = `${deletedMessageTime} ${deletedMessageUser}: ${deletedMessageText}`;
+        // message_item.isDeleted = true
+        return message_item.isDeleted;
+        // console.log({channelsObj3})
+        // localStorage.setItem('channels', JSON.stringify(channelsObj3));
+        // const testing = JSON.parse(localStorage.getItem('channels'));
+        // console.log({testing})
+
+    });
+};
+
 
 function displayOldMessagesFromChosenChannel(channelName) {
     document.querySelector('#messages_list').innerHTML = null;
@@ -24,28 +96,20 @@ function displayOldMessagesFromChosenChannel(channelName) {
         currentChannelContent.shift();
     }
     for (const message_item of currentChannelContent) {
+        // console.log('message_item when trying to delete old message')
+        // console.log({message_item})
+        const tableRow = createNewRow();
+        const tableColumn = createNewColumn();
          
-        const tableRow = document.createElement('div');
-        tableRow.classList.add("row");
-        const tableColumn = document.createElement('div');
-        tableColumn.classList.add("col-10");
         tableColumn.id = message_item.id
-
-        const deletionTableColum = document.createElement('div');
-        deletionTableColum.classList.add("col-2");
-
-
-        const a = document.createElement('a')
-        a.href='#';
-        a.appendChild(document.createTextNode('Delete'))
-        deletionTableColum.appendChild(a);
+        const deleteButton = deleteOption();
 
         if (message_item.isDeleted == false) {
             if (localStorage.getItem('username') == message_item.user) {
                 const messageToDisplay = `${message_item.time} ${message_item.user}: ${message_item.message}`;
                 tableColumn.appendChild(document.createTextNode(messageToDisplay));
                 tableRow.appendChild(tableColumn);
-                tableRow.appendChild(deletionTableColum);
+                tableRow.appendChild(deleteButton);
             } else {
                 const messageToDisplay = `${message_item.time} ${message_item.user}: ${message_item.message}`;
                 tableColumn.appendChild(document.createTextNode(messageToDisplay));
@@ -60,15 +124,13 @@ function displayOldMessagesFromChosenChannel(channelName) {
         messages_list_element.appendChild(tableRow);
     
         //delete message
-        a.onclick = (evt) => {
+        deleteButton.onclick = (evt) => {
             evt.preventDefault();
-            socket.emit('delete message', {'message' : message_item});
-            socket.on('display deleted message', data => {
-                document.getElementById(`${tableColumn.id}`).innerHTML = `${data.message.time} ${data.message.user}: ${data.message.message}`
+            deleteMessage(message_item, channelsObj3);
             message_item.isDeleted = true
             localStorage.setItem('channels', JSON.stringify(channelsObj3));
-            });
-        };
+        }
+        
     }; 
 };
 
@@ -105,19 +167,16 @@ const default_channel = localStorage.getItem('default_channel')
 
 for (const channelName of Object.keys(channelsObj)) {
     // console.log({channelName})
-    const a = document.createElement('a');
+    const a = createNewAElement();
+    const tableRow = createNewRow();
+    const tableColumn = createNewColumn();
     a.id = channelName;
-    const tableRow = document.createElement('div');
-    tableRow.classList.add("row");
-    const tableColumn = document.createElement('div');
-    tableColumn.classList.add("col");
     a.appendChild(document.createTextNode(channelName));
     a.onclick = (evt) => {
         evt.preventDefault();
         localStorage.setItem('default_channel', channelName);
         displayOldMessagesFromChosenChannel(channelName);
     }
-    a.href="";
     tableColumn.appendChild(a);
     tableRow.appendChild(tableColumn);
     listContainer.appendChild(tableRow);    
@@ -168,7 +227,6 @@ document.addEventListener('DOMContentLoaded', () => {
         
             // Create new item for list
             try {
-                const timestap = Math.floor(Date.now() / 1000)
                 const currentdate = new Date(); 
                 const datetime = currentdate.getDate() + "/"
                                 + (currentdate.getMonth()+1)  + "/" 
@@ -192,11 +250,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (currentChannelContentLength > 100) {
                     currentChannelContent.shift();
                 }
-
                 currentChannelContent.push(message);
 
 
                 socket.emit('submit message', {'message' : message});
+                
 
                 // add list to local storage
                 localStorage.setItem('channels', JSON.stringify(channelsObj3));
@@ -213,35 +271,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     //display new message
     socket.on('display message', data => {
-
-        const tableRow = document.createElement('div');
-        tableRow.classList.add("row");
-        const tableColumn = document.createElement('div');
-        tableColumn.classList.add("col-10");
-        tableColumn.id = data.message.id;
-
-        const deletionTableColum = document.createElement('div');
-        deletionTableColum.classList.add("col-2");
-
-
-        const a = document.createElement('a')
-        a.href='#';
-        a.appendChild(document.createTextNode('Delete'))
-        deletionTableColum.appendChild(a);
-
-        if (localStorage.getItem('username') == data.message.user) {
-            const messageToDisplay = `${data.message.time} ${data.message.user}: ${data.message.message}`;
-            tableColumn.appendChild(document.createTextNode(messageToDisplay));
-            tableRow.appendChild(tableColumn);
-            tableRow.appendChild(deletionTableColum);
-        } else {
-            const messageToDisplay = `${data.message.time} ${data.message.user}: ${data.message.message}`;
-            tableColumn.appendChild(document.createTextNode(messageToDisplay));
-            tableRow.appendChild(tableColumn);
-        }
-
-        document.querySelector('#messages_list').append(tableRow);
-
+        displayNewMessage(data);
     });
 
 
