@@ -15,52 +15,49 @@
             
     </head>
     <body style="background-color: white;">
-        <div >
-            <div class="headers" style="text-align: left; background-color: #AC3B61; padding:5px; color:white;" >
+            <div class="headers">
                 <h3>FLACK</h3>
                 <h5 id="welcome" ></h5>
             </div>
-        </div>
-            <div class="row" id='changeName' style="text-align: left; background-color: #AC3B61; margin:auto; padding:5px; color:white; font-size:14px;">
+            <div class="row" id='changeName'>
                     <form id="new-name" method="POST">
                         <label for="name">Change name:</label>
                         <input id="name" autocomplete="off" autofocus placeholder="Username" type="text">
-                        <input id="submit" type="submit" value="Change" style="width: 70px;">
+                        <input id="submit" type="submit" value="Change">
                     </form>
             </div>
            
-            <div class="row" id='AddChannel' style="background-color: #AC3B61; margin:auto; padding:5px; color:white; font-size:14px;">
+            <div class="row" id='AddChannel' >
                     <form id="new_channel" method="POST">
                         <label for="channel_name">Add new channel:</label>
                         <input id="channel_name" name="new_channel" autocomplete="off" autofocus placeholder="Channel name" type="text">
-                        <input id="submit" type="submit" value="Add" style="width: 70px;">
+                        <input id="submit" type="submit" value="Add">
                     </form>
             </div>
          </div>
             
         </div>
         <div style="height:auto;">
-            <div class="row" style="height:auto; width:100%; margin-left:0px; margin-right:0px">
-
-                <div id="channels" class="col-2" style="background-color:#AC3B61;">
+            <div class="row">
+                <div id="channels" class="col-2">
                     <div class="row">
-                        <div class="col" style="color: white; text-align:left; margin-left:-25px;"> Channels:</div>
+                        <div class="col" id='channelsTitle'> Channels:</div>
                     </div>    
-                    <div id="channel-list" style="color: white; text-align:left;">
+                    <div id="channel-list">
                     </div>
                 </div>
 
-                <div id="chat" class="col-10" style="border: 1px solid black; background-color:white;">
+                <div id="chat" class="col-10">
                     <div class="row">
-                        <div id="currentChannelName" class="col" style="font-weight:bold; padding:5px;"></div>
+                        <div id="currentChannelName" class="col"></div>
                     </div>
                     <div id="messages_list">
                         
                     </div>
 
-                        <form id="write_new_message" style=" width:100%; padding-top:40px; padding-bottom:40px;">
-                            <input style="width:85%;" id="new_message" autocomplete="off" autofocus placeholder="New message" type="text">
-                            <input style="width: 14%;" id="send_message" value="Send" type="submit">
+                        <form id="write_new_message">
+                            <input id="new_message" autocomplete="off" autofocus placeholder="New message" type="text">
+                            <input id="send_message" value="Send" type="submit">
                         </form>
                     </div>
                   
