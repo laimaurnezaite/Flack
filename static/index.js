@@ -110,7 +110,7 @@ for (const channelName of Object.keys(channelsObj)) {
     const tableRow = document.createElement('div');
     tableRow.classList.add("row");
     const tableColumn = document.createElement('div');
-    tableColumn.classList.add("col-2");
+    tableColumn.classList.add("col");
     a.appendChild(document.createTextNode(channelName));
     a.onclick = (evt) => {
         evt.preventDefault();
@@ -130,7 +130,7 @@ document.querySelector('#new_channel').onsubmit = (event) => {
     try {
         const new_channel_name = document.querySelector('#channel_name').value;
         const channelsObj = JSON.parse(localStorage.getItem('channels'));
-        
+
         // check if there is no channel already
         for (const channelName of Object.keys(channelsObj)) {
             if (channelName == new_channel_name) {
