@@ -1,19 +1,14 @@
-data = {'message': {'user': 'Laima', 'time': '29/3/2020 @ 21:18:50', 'message': 'kokok', 'isDeleted': False}}
-message = data["message"]
-print(message)
+# display old messages from storage
+message_item: {user: "koko", time: "30/3/2020 @ 15:18:56", message: "fda", isDeleted: false, id: "1585570736613koko"}
 
-message["user"] = "zilvinas"
-print(message)
-
-
-
-# message = data["message"]["message"]
-# data["message"]["message"] = "This message was removed"
+# display new message
+data: {message: {user: "koko", time: "30/3/2020 @ 15:29:49", message: "fffff", isDeleted: false, id: "1585571389699koko"}}
 
 
 
 # trying to delete old message
-{'message': {'user': 'f', 'time': '30/3/2020 @ 13:39:21', 'message': 'asf', 'isDeleted': False, 'id': '1585564761736f'}}
+data: {user: "koko", time: "30/3/2020 @ 15:41:0", message: "ASSD", isDeleted: false, id: "1585572060831koko"}
 
 # trying to delete new message
-{'message': {'user': 'f', 'time': '30/3/2020 @ 13:48:43', 'message': 'laima', 'isDeleted': False, 'id': '1585565323323f'}}
+data: {user: "koko", time: "30/3/2020 @ 15:43:19", message: "ddd", isDeleted: false, id: "1585572199515koko"}
+
