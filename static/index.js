@@ -8,13 +8,14 @@ function getChannelsFromStorage() {
 
 function checkLength(currentChannelContent) {
     if (!currentChannelContent) {
-        return false
+        return JSON.stringify({});
+        
+    } else {
+        const currentChannelContentLength = currentChannelContent.length;
+        if (currentChannelContentLength > 100) {
+            currentChannelContent.shift();
+        }
     }
-    const currentChannelContentLength = currentChannelContent.length;
-    if (currentChannelContentLength > 100) {
-        currentChannelContent.shift();
-    }
-
     return currentChannelContent
 }
 
@@ -23,7 +24,7 @@ function updateLocalStorage(channelName, content) {
 }
 
 function getDefaultChannel() {
-    const defaultChannel = localStorage.getItem('default_channel');
+    const defaultChannel = localStorage.getItem('defaultChannel');
     return defaultChannel;
 }
 
@@ -57,9 +58,10 @@ function displayNewMessage(data) {
     const tableRow = createNewRow();
     const tableColumn = createNewColumn();
     const deleteButton = deleteOption();
-    tableColumn.id = data.message.id;
-    if (localStorage.getItem('username') == data.message.user) {
-        const messageToDisplay = `${data.message.time} ${data.message.user}: ${data.message.message}`;
+    tableColumn.id = data.id
+
+    if (localStorage.getItem('username') == data["user"]) {
+        const messageToDisplay = `${data["time"]} ${data["user"]}: ${data["message"]}`;
         tableColumn.appendChild(document.createTextNode(messageToDisplay));
         tableRow.appendChild(tableColumn);
         tableRow.appendChild(deleteButton);
@@ -73,8 +75,7 @@ function displayNewMessage(data) {
     deleteButton.onclick = (evt) => {
         event.preventDefault();
         console.log({data})
-        const dataToDelete = data['message']
-        deleteMessage(dataToDelete);
+        deleteMessage(data);
     }
 };
 
@@ -94,37 +95,27 @@ function deleteMessage(message_item) {
 
 
 function displayOldMessagesFromChosenChannel(channelName) {
-    // emty messages from previous list
+    // empty messages from previous list
     document.querySelector('#messages_list').innerHTML = null;
 
     // show current channel title
     document.querySelector('#currentChannelName').innerHTML = `Messages in channel: ${channelName}`;
 
     // dislay old messages form storage
-    const messages_list_element = document.querySelector('#messages_list');
     const channelsObj = getChannelsFromStorage();
     const defaultChannel = getDefaultChannel();
     const currentChannelContent = channelsObj[defaultChannel];
     const currentChannelContentChecked = checkLength(currentChannelContent);
     
-    // if (!currentChannelContent) {
-    //     return false
-    // } else {
-    //     var currentChannelContentLength = currentChannelContent.length;
-    // }
     
-    // if (currentChannelContentLength > 100) {
-    //     currentChannelContent.shift();
-    // }
     for (const message_item of currentChannelContentChecked) {
-        // console.log('message_item when trying to delete old message')
-        // console.log({message_item})
+        
         const tableRow = createNewRow();
         const tableColumn = createNewColumn();
-         
-        tableColumn.id = message_item.id
         const deleteButton = deleteOption();
+        tableColumn.id = message_item.id
 
+        // check if message was deleted previoulsy
         if (message_item.isDeleted == false) {
             if (localStorage.getItem('username') == message_item.user) {
                 const messageToDisplay = `${message_item.time} ${message_item.user}: ${message_item.message}`;
@@ -141,10 +132,9 @@ function displayOldMessagesFromChosenChannel(channelName) {
             tableColumn.appendChild(document.createTextNode(messageToDisplay));
             tableRow.appendChild(tableColumn);
         }
-
-        messages_list_element.appendChild(tableRow);
+        document.querySelector('#messages_list').append(tableRow);
     
-        //delete message
+        // delete message
         deleteButton.onclick = (evt) => {
             evt.preventDefault();
             deleteMessage(message_item);
@@ -181,12 +171,10 @@ updateLocalStorage('channels', JSON.stringify({}));
 document.addEventListener('DOMContentLoaded', () => {
 
     const listContainer = document.querySelector('#channel-list');
-    const channelsObj = JSON.parse(localStorage.getItem('channels'));
-    const default_channel = localStorage.getItem('default_channel')
-    // console.log({default_channel,});
+    const channelsObj = getChannelsFromStorage();
+    const defaultChannel = getDefaultChannel()
 
     for (const channelName of Object.keys(channelsObj)) {
-        // console.log({channelName})
         const a = createNewAElement();
         const tableRow = createNewRow();
         const tableColumn = createNewColumn();
@@ -194,7 +182,7 @@ document.addEventListener('DOMContentLoaded', () => {
         a.appendChild(document.createTextNode(channelName));
         a.onclick = (evt) => {
             evt.preventDefault();
-            updateLocalStorage('default_channel', channelName);
+            updateLocalStorage('defaultChannel', channelName);
             displayOldMessagesFromChosenChannel(channelName);
         }
         tableColumn.appendChild(a);
@@ -208,7 +196,8 @@ document.addEventListener('DOMContentLoaded', () => {
         // Create new item for list
         try {
             const new_channel_name = document.querySelector('#channel_name').value;
-            const channelsObj = JSON.parse(localStorage.getItem('channels'));
+            // const channelsObj = JSON.parse(localStorage.getItem('channels'));
+            const channelsObj = getChannelsFromStorage();
 
             // check if there is no channel already
             for (const channelName of Object.keys(channelsObj)) {
@@ -225,20 +214,17 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log(e);
         }
     }
-
 });
 
 
 //WORK WITH MESSAGES
             
 document.addEventListener('DOMContentLoaded', () => {
-    const default_channel = localStorage.getItem('default_channel')
-    displayOldMessagesFromChosenChannel(default_channel);
-    
+    const defaultChannel = getDefaultChannel()
+    displayOldMessagesFromChosenChannel(defaultChannel);
                 
-    if (!localStorage.getItem('default_channel'))
-    updateLocalStorage('default_channel', JSON.stringify([]));
-    
+    if (!localStorage.getItem('defaultChannel'))
+    updateLocalStorage('defaultChannel', JSON.stringify([]));
     
     //write new message
     socket.on('connect', () => {
@@ -261,9 +247,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 message.message = document.querySelector('#new_message').value
                 message.isDeleted = false;
                 message.id = new Date().getTime() + message.user;
-                const default_channel = localStorage.getItem('default_channel')
-                const channelsObj3 = JSON.parse(localStorage.getItem('channels'));
-                const currentChannelContent = channelsObj3[default_channel];
+                const defaultChannel = getDefaultChannel();
+                const channelsObj = getChannelsFromStorage();
+                const currentChannelContent = channelsObj[defaultChannel];
                 const currentChannelContentChecked = checkLength(currentChannelContent);
             
                 currentChannelContentChecked.push(message);
@@ -271,7 +257,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 socket.emit('submit message', {'message' : message});
 
                 // add list to local storage
-                updateLocalStorage('channels', JSON.stringify(channelsObj3));
+                updateLocalStorage('channels', JSON.stringify(channelsObj));
 
                 // Clear input field and disable button again
                 document.querySelector('#new_message').value = '';
@@ -285,10 +271,9 @@ document.addEventListener('DOMContentLoaded', () => {
     
     //display new message
     socket.on('display message', data => {
-        displayNewMessage(data);
+        const dataToBeDisplayed = data["message"]
+        displayNewMessage(dataToBeDisplayed);
     });
-
-
 });
 
 
