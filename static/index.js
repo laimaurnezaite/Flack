@@ -31,7 +31,7 @@ function getDefaultChannel() {
 function createNewRow() {
     const tableRow = document.createElement('div');
     tableRow.classList.add("row");
-    return tableRow
+    return tableRow;
 }
 function createNewColumn() {
     const tableColumn = document.createElement('div');
@@ -47,7 +47,8 @@ function createNewAElement() {
 
 function deleteOption() {
     const deleteButton = createNewColumn();
-    deleteButton.classList.toggle("col-2");
+    deleteButton.classList.remove('col')
+    deleteButton.classList.add('col-2');
     const a = createNewAElement();
     a.appendChild(document.createTextNode('Delete'))
     deleteButton.appendChild(a);

@@ -5,6 +5,7 @@
     padding-bottom: 5px;
 }
 
+
 .col-2 {
     text-align: right;
 }
@@ -18,8 +19,9 @@
 .col-2 a:visited{
     color: black;
 }
+
 .col a:link {
-    color: black;
+    color: white;
   }
   
 .col a:visited {
@@ -28,6 +30,5 @@
   
 .col a:hover {
     cursor: pointer;
-    color: white;
     text-decoration: underline;
   }
