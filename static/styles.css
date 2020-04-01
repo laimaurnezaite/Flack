@@ -90,3 +90,9 @@
 #send_message {
     width: 14%;
 }
+.addingUser {
+    display: none;
+}
+.hideContent {
+    display: none;
+}
