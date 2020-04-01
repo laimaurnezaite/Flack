@@ -7,7 +7,7 @@ Web Programming with Python and JavaScript
 - git init 
 - poetry init
 - poetry add flask
-- poetry add poetry add Flask-SocketIO
+- poetry add Flask-SocketIO
 - and other packages
 
 # Export
@@ -16,9 +16,3 @@ Web Programming with Python and JavaScript
 
 # How to run app?
 - poetry run flask run
-
-# How to print something to console?
-- console.log({
-    li,
-    data
-});
