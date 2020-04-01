@@ -19,50 +19,51 @@
                 <h3>FLACK</h3>
                 <h5 id="welcome" ></h5>
             </div>
-            <div class="row" id='changeName'>
-                    <form id="new-name" method="POST">
-                        <label for="name">Change name:</label>
-                        <input id="name" autocomplete="off" autofocus placeholder="Username" type="text">
-                        <input id="submit" type="submit" value="Change">
+            <div id='addinguser'> 
+                <div class="row" id='changeName'>
+                    <form id="newUser" method="POST">
+                        <label for="name">What is your nickname?</label>
+                        <input id="name" autocomplete="off" name="username" autofocus placeholder="Username" type="text">
+                        <input id="submit" type="submit" value="Enter">
                     </form>
+                </div>
+
             </div>
-           
+        <div id='flack' class="hideContent">
             <div class="row" id='AddChannel' >
-                    <form id="new_channel" method="POST">
-                        <label for="channel_name">Add new channel:</label>
-                        <input id="channel_name" name="new_channel" autocomplete="off" autofocus placeholder="Channel name" type="text">
-                        <input id="submit" type="submit" value="Add">
-                    </form>
+                <form id="new_channel" method="POST">
+                    <label for="channel_name">Add new channel:</label>
+                    <input id="channel_name" name="new_channel" autocomplete="off" autofocus placeholder="Channel name" type="text">
+                    <input id="submit" type="submit" value="Add">
+                </form>
             </div>
-         </div>
-            
-        </div>
-        <div style="height:auto;">
-            <div class="row">
-                <div id="channels" class="col-2">
-                    <div class="row">
-                        <div class="col" id='channelsTitle'> Channels:</div>
-                    </div>    
-                    <div id="channel-list">
-                    </div>
-                </div>
-
-                <div id="chat" class="col-10">
-                    <div class="row">
-                        <div id="currentChannelName" class="col"></div>
-                    </div>
-                    <div id="messages_list">
-                        
+        
+            <div style="height:auto;">
+                <div class="row">
+                    <div id="channels" class="col-2">
+                        <div class="row">
+                            <div class="col" id='channelsTitle'> Channels:</div>
+                        </div>    
+                        <div id="channel-list">
+                        </div>
                     </div>
 
-                        <form id="write_new_message">
-                            <input id="new_message" autocomplete="off" autofocus placeholder="New message" type="text">
-                            <input id="send_message" value="Send" type="submit">
-                        </form>
+                    <div id="chat" class="col-10">
+                        <div class="row">
+                            <div id="currentChannelName" class="col"></div>
+                        </div>
+                        <div id="messages_list">
+                            
+                        </div>
+                            <form id="write_new_message">
+                                <input id="new_message" autocomplete="off" autofocus placeholder="New message" type="text">
+                                <input id="send_message" value="Send" type="submit">
+                            </form>
+                        </div>
+                    
                     </div>
-                  
                 </div>
             </div>
-        </div>
+        </div>  
     </body>
 </html>
