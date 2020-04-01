@@ -49,6 +49,7 @@ function deleteOption() {
     const deleteButton = createNewColumn();
     deleteButton.classList.remove('col')
     deleteButton.classList.add('col-2');
+    deleteButton.id = 'deleteButton'
     const a = createNewAElement();
     a.appendChild(document.createTextNode('Delete'))
     deleteButton.appendChild(a);
@@ -60,23 +61,31 @@ function displayNewMessage(data) {
     const tableColumn = createNewColumn();
     const deleteButton = deleteOption();
     tableColumn.id = data.id
+    console.log({data})
 
-    if (localStorage.getItem('username') == data["user"]) {
-        const messageToDisplay = `${data["time"]} ${data["user"]}: ${data["message"]}`;
-        tableColumn.appendChild(document.createTextNode(messageToDisplay));
-        tableRow.appendChild(tableColumn);
-        tableRow.appendChild(deleteButton);
-    } else {
-        const messageToDisplay = `${data.message.time} ${data.message.user}: ${data.message.message}`;
-        tableColumn.appendChild(document.createTextNode(messageToDisplay));
-        tableRow.appendChild(tableColumn);
-    }
+    const messageToDisplay = `${data["time"]} ${data["user"]}: ${data["message"]}`;
+    tableColumn.appendChild(document.createTextNode(messageToDisplay));
+    tableRow.appendChild(tableColumn);
+    tableRow.appendChild(deleteButton);
+    // if (socket.username == data["user"]) { 
+    //     tableRow.appendChild(deleteButton);
+    // }
+
     document.querySelector('#messages_list').append(tableRow);
 
     deleteButton.onclick = (evt) => {
         event.preventDefault();
-        console.log({data})
-        deleteMessage(data);
+        // console.log({data})
+        // deleteMessage(data);
+        socket.emit('delete message', {'message' : data});
+        socket.on('display deleted message', data => {
+            // const deletedMessageText = data["message"]["message"];
+            // const deletedMessageID = data["message"]["id"];
+            // // console.log({deletedMessageID});
+            // const deletedMessageTime = data["message"]["time"];
+            // const deletedMessageUser = data["message"]["user"];
+            document.getElementById(`${data["message"]["id"]}`).innerHTML = `${data["message"]["time"]} ${data["message"]["user"]}: ${data["message"]["message"]}`;
+        });
     }
 };
 
@@ -86,7 +95,7 @@ function deleteMessage(message_item) {
     socket.on('display deleted message', data => {
         const deletedMessageText = data["message"]["message"];
         const deletedMessageID = data["message"]["id"];
-        console.log({deletedMessageID});
+        // console.log({deletedMessageID});
         const deletedMessageTime = data["message"]["time"];
         const deletedMessageUser = data["message"]["user"];
         document.getElementById(`${deletedMessageID}`).innerHTML = `${deletedMessageTime} ${deletedMessageUser}: ${deletedMessageText}`;
@@ -118,16 +127,13 @@ function displayOldMessagesFromChosenChannel(channelName) {
 
         // check if message was deleted previoulsy
         if (message_item.isDeleted == false) {
-            if (localStorage.getItem('username') == message_item.user) {
                 const messageToDisplay = `${message_item.time} ${message_item.user}: ${message_item.message}`;
                 tableColumn.appendChild(document.createTextNode(messageToDisplay));
                 tableRow.appendChild(tableColumn);
                 tableRow.appendChild(deleteButton);
-            } else {
-                const messageToDisplay = `${message_item.time} ${message_item.user}: ${message_item.message}`;
-                tableColumn.appendChild(document.createTextNode(messageToDisplay));
-                tableRow.appendChild(tableColumn);
-            }
+                // if (socket.username == message_item.user) {
+                //     tableRow.appendChild(deleteButton);
+                // }
         } else {
             const messageToDisplay = `${message_item.time} ${message_item.user}: This message was removed`;
             tableColumn.appendChild(document.createTextNode(messageToDisplay));
@@ -138,8 +144,20 @@ function displayOldMessagesFromChosenChannel(channelName) {
         // delete message
         deleteButton.onclick = (evt) => {
             evt.preventDefault();
-            deleteMessage(message_item);
-            message_item.isDeleted = true
+            if (socket.username == message_item.user) {
+                // deleteMessage(message_item);
+                socket.emit('delete message', {'message' : message_item});
+                socket.on('display deleted message', data => {
+                    const deletedMessageText = data["message"]["message"];
+                    const deletedMessageID = data["message"]["id"];
+                    // console.log({deletedMessageID});
+                    const deletedMessageTime = data["message"]["time"];
+                    const deletedMessageUser = data["message"]["user"];
+                    document.getElementById(`${deletedMessageID}`).innerHTML = `${deletedMessageTime} ${deletedMessageUser}: ${deletedMessageText}`;
+
+    });
+                message_item.isDeleted = true
+            }
             updateLocalStorage('channels', JSON.stringify(channelsObj));
         }
         
@@ -148,20 +166,39 @@ function displayOldMessagesFromChosenChannel(channelName) {
 
 //WORK WITH NAMES
 // Set starting value of username to 'Stranger'
-if (!localStorage.getItem('username'))
-    updateLocalStorage('username', 'Stranger');
+// if (!localStorage.getItem('username'))
+//     updateLocalStorage('username', 'Stranger');
+//     const defaultUsername = 'Stranger'
 
 // Load current value of username
 document.addEventListener('DOMContentLoaded', () => {
+    document.querySelector('#welcome').innerHTML = 'Hi, Stranger';
 
     // get new value for username from user
-    document.querySelector('#new-name').onsubmit = () => {
+    document.querySelector('#newUser').onsubmit = (event) => {
+         event.preventDefault();
+
         const username = document.querySelector('#name').value;
-        updateLocalStorage('username', username);
+        socket.username = username;
+        // display welcome sentence
+        document.querySelector('#welcome').innerHTML = "Hi,  " + socket.username;
+        document.querySelector('#addinguser').classList.add("addingUser"); 
+
+        document.querySelector('#flack').classList.remove('hideContent')
+        document.querySelector('#flack').classList.add('showContent')
+
+        // document.getElementsByClassName('hideContent').id = 'body';
+
+        // document.getElementsByClassName('hideContent').classList.remove('hideContent');
+        // document.getElementById('#flack').classList.add('showContent');
+
     };
-    // display welcome sentence
-    document.querySelector('#welcome').innerHTML = "Hi,  " + localStorage.getItem('username');
+    
 });
+
+
+    
+
 
 
 //WORK WITH CHANNELS
@@ -192,6 +229,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }                
     // get new channel from user
     document.querySelector('#new_channel').onsubmit = (event) => {
+        // event.preventDefault();
 
         // Create new item for list
         try {
@@ -241,7 +279,9 @@ document.addEventListener('DOMContentLoaded', () => {
                                 + currentdate.getSeconds();
 
                 const message = {};
-                message.user = localStorage.getItem('username');
+                message.user = socket.username 
+                
+                // message.user = localStorage.getItem('username');
                 message.time = datetime;
                 message.message = document.querySelector('#new_message').value
                 message.isDeleted = false;
@@ -252,6 +292,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const currentChannelContentChecked = checkLength(currentChannelContent);
             
                 currentChannelContentChecked.push(message);
+                // console.log({message})
 
                 socket.emit('submit message', {'message' : message});
 
@@ -271,6 +312,7 @@ document.addEventListener('DOMContentLoaded', () => {
     //display new message
     socket.on('display message', data => {
         const dataToBeDisplayed = data["message"]
+        // console.log({dataToBeDisplayed})
         displayNewMessage(dataToBeDisplayed);
     });
 });
